@@ -1413,6 +1413,37 @@ h1, h2, h3, .foot-sub, .work-note, .aw-head p { text-wrap: balance; }
 .ov .pg-in { cursor: grab; }
 .ov-vp.dragging .pg-in, .ov .pg-in:active { cursor: grabbing; }
 
+/* sticker story cards: same padding on every side, compact */
+.fl-back { padding: 20px !important; }
+.fl-mini { height: 56px !important; margin: 12px 0 10px !important; }
+.fl-t { font-size: 25px !important; }
+.fl-hr { margin: 10px 0 !important; }
+.fl-d { font-size: 14px !important; line-height: 1.5 !important; }
+.fl-foot { margin-top: 14px !important; padding-top: 0 !important; }
+
+/* stain numbers: optically centred in the ring (the display font sits its digits low) */
+#ap-journey .st-no { transform: translateY(-0.14em); font-style: normal !important; font-weight: 900 !important; }
+
+/* case-study details block: clearly in the brand green */
+#cs-meta, #cs-meta dt, #cs-meta dd { color: var(--ink) !important; opacity: 1 !important; }
+#cs-meta dt { font-weight: 700; letter-spacing: .1em; }
+#cs-meta dd { font-weight: 600; font-size: max(14px, calc(15 * var(--u))); line-height: 1.4; }
+
+/* ---------- Phones: stickers in one swipeable row, no arrow characters ---------- */
+@media (max-width: 700px) {
+  #stickers .deck-stage { display: flex !important; flex-wrap: nowrap; align-items: center; gap: 18px; height: auto !important; min-height: 0 !important;
+    overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    margin: 0 -20px; padding: 14px 20px 22px; scrollbar-width: none; }
+  #stickers .deck-stage::-webkit-scrollbar { display: none; }
+  #stickers .deck-stage .stk { flex: 0 0 auto; width: min(36vw, 170px) !important; max-height: none; scroll-snap-align: center; transform: rotate(calc(var(--r) * .35)); }
+  #stickers .deck-stage .stk-art { max-height: 170px; }
+  .arr { display: none !important; }
+  .m-menu a::after { content: none !important; }
+}
+
+/* case-study intro text in black */
+#cs-lede, #cs-lede p { color: #1E1B18 !important; }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; transition-delay: 0ms !important; animation: none !important; scroll-behavior: auto !important; }
@@ -2473,18 +2504,24 @@ var RESUME = { filename: 'Kisha-Dua-Resume.pdf', data: 'data:application/pdf;bas
     b.innerHTML = '<span class="fl-in"><span class="fl-face fl-front">' + art + '</span>' +
       '<span class="fl-face fl-back" style="--bg:' + d.bg + '"><span class="fl-label">A little piece of me</span>' + mini +
       '<span class="fl-t"></span><span class="fl-hr"></span><span class="fl-d"></span>' +
-      '<span class="fl-foot"><span class="fl-back-ic" aria-hidden="true">&#8634; flip back</span></span></span></span>';
+      '<span class="fl-foot"><span class="fl-back-ic" aria-hidden="true"><span class="arr">&#8634; </span>flip back</span></span></span></span>';
     b.querySelector('.fl-t').textContent = d.title; b.querySelector('.fl-d').textContent = d.desc;
     return b;
   }
 
+  /* each story card is exactly as tall as its content: no empty space at the bottom */
+  function fitH(fl, W) {
+    var c = fl.querySelector('.fl-back').cloneNode(true);
+    c.style.cssText = 'position:fixed;left:-9999px;top:0;width:' + W + 'px;height:auto;transform:none;visibility:hidden;inset:auto';
+    document.body.appendChild(c); var h = Math.ceil(c.getBoundingClientRect().height); c.remove(); return h;
+  }
   function open(s) {
     busy = true;
     var m = small(), stage = s.closest('.deck-stage'), host = m ? overlay : stage, fl = card(s), r = parseFloat(getComputedStyle(s).getPropertyValue('--r')) || 0, from, to;
     if (m) {
       overlay.hidden = false; requestAnimationFrame(function () { overlay.classList.add('on'); });
       var b = s.getBoundingClientRect(); from = { x: b.left, y: b.top, w: b.width, h: b.height };
-      var W = Math.min(innerWidth > 700 ? 380 : 340, innerWidth - 40), Hh = Math.min(W * (innerWidth > 700 ? 1.5 : 1.75), innerHeight - 60); to = { x: (innerWidth - W) / 2, y: (innerHeight - Hh) / 2, w: W, h: Hh }; if (innerWidth <= 700) r = r * .4;
+      var W = Math.min(innerWidth > 700 ? 320 : 300, innerWidth - 40), Hh = Math.min(fitH(fl, W), innerHeight - 60); to = { x: (innerWidth - W) / 2, y: (innerHeight - Hh) / 2, w: W, h: Hh }; if (innerWidth <= 700) r = r * .4;
     } else {
       from = { x: s.offsetLeft, y: s.offsetTop, w: s.offsetWidth, h: s.offsetHeight };
       var sw = stage.clientWidth, sh = stage.clientHeight, W2 = Math.min(360, sw - 40), H2 = W2 * 1.6, sr = stage.getBoundingClientRect();
@@ -2610,7 +2647,7 @@ var RESUME = { filename: 'Kisha-Dua-Resume.pdf', data: 'data:application/pdf;bas
 <script>
 /* project content for the case-study template */
 (function () {
-  var P = {"01": {"name": "Nazariya", "lines": ["Nazariya."], "disc": "Brand Identity & Visual Communication", "time": "4 weeks", "tools": "Photoshop, Illustrator", "body": ["Nazariya is a spectacle brand founded on perspective. More than just eyewear, it&#8217;s a symbol. Designed primarily for women whose everyday care often goes unnoticed and unacknowledged, Nazariya aims to shift that gaze.", "The brand encourages people to pause and look again. When a woman wears Nazariya it reminds her to notice her own joy and softness without guilt."], "ready": true}, "02": {"name": "Bare Minimum", "lines": ["Bare", "Minimum."], "disc": "Concept Development, Branding &amp; Art Direction, Copywriting", "time": "3 weeks", "tools": "Photoshop, Illustrator, AI", "body": ["A typography-led stationery brand that transforms everyday frustration into humor. Bare Minimum uses sharp, sarcastic copy across products like pencils, notebooks, and calendars to reflect the reality of deadlines and burnout.", "The visual language is bold and direct, built to feel relatable, expressive, and unapologetically honest."], "ready": true}, "03": {"name": "Lives on Hold", "lines": ["Lives on", "Hold."], "disc": "Experiential Advertising", "time": "3 weeks", "tools": "Photoshop, Illustrator, AI", "body": ["We wait for trains, meetings, and our turn in line. But for thousands waiting for an organ transplant, waiting means something entirely different. It means putting life on hold, without knowing if a second chance will ever come.", "Lives on Hold brings their stories into everyday waiting spaces through handmade dolls, turning ordinary moments of waiting into reminders of lives that are still waiting to begin again."], "ready": true}, "04": {"name": "After6", "lines": ["After6."], "disc": "Concept UI/UX Design &amp; Digital Product Design", "time": "4 weeks", "tools": "Photoshop, Figma", "body": ["AFTER6 is a social discovery app designed for spontaneous plans and meaningful connections. Whether it&#8217;s exploring a new caf&#233;, attending an event, or simply stepping out, the app connects people through shared interests, activities, and real-time availability.", "It turns the familiar problem of having nowhere to go or no one to go with into an opportunity to meet, explore, and connect."], "ready": true}};
+  var P = {"01": {"name": "Nazariya", "lines": ["Nazariya."], "disc": "Brand Identity &amp;<br>Visual Communication", "time": "4 weeks", "tools": "Photoshop,<br>Illustrator", "body": ["Nazariya is a spectacle brand founded on perspective. More than just eyewear, it&#8217;s a symbol. Designed primarily for women whose everyday care often goes unnoticed and unacknowledged, Nazariya aims to shift that gaze.", "The brand encourages people to pause and look again. When a woman wears Nazariya it reminds her to notice her own joy and softness without guilt."], "ready": true}, "02": {"name": "Bare Minimum", "lines": ["Bare", "Minimum."], "disc": "Concept Development, Branding &amp; Art Direction, Copywriting", "time": "3 weeks", "tools": "Photoshop, Illustrator, AI", "body": ["A typography-led stationery brand that transforms everyday frustration into humor. Bare Minimum uses sharp, sarcastic copy across products like pencils, notebooks, and calendars to reflect the reality of deadlines and burnout.", "The visual language is bold and direct, built to feel relatable, expressive, and unapologetically honest."], "ready": true}, "03": {"name": "Lives on Hold", "lines": ["Lives on", "Hold."], "disc": "Experiential Advertising", "time": "3 weeks", "tools": "Photoshop, Illustrator, AI", "body": ["We wait for trains, meetings, and our turn in line. But for thousands waiting for an organ transplant, waiting means something entirely different. It means putting life on hold, without knowing if a second chance will ever come.", "Lives on Hold brings their stories into everyday waiting spaces through handmade dolls, turning ordinary moments of waiting into reminders of lives that are still waiting to begin again."], "ready": true}, "04": {"name": "After6", "lines": ["After6."], "disc": "Concept UI/UX Design &amp; Digital Product Design", "time": "4 weeks", "tools": "Photoshop, Figma", "body": ["AFTER6 is a social discovery app designed for spontaneous plans and meaningful connections. Whether it&#8217;s exploring a new caf&#233;, attending an event, or simply stepping out, the app connects people through shared interests, activities, and real-time availability.", "It turns the familiar problem of having nowhere to go or no one to go with into an opportunity to meet, explore, and connect."], "ready": true}};
   function esc(s) { var d = document.createElement('div'); d.innerHTML = s; return d.innerHTML; }
   window.__pname = function (n) { return P[n] ? P[n].name : null; };
   window.__fillCase = function (n) {
@@ -2818,6 +2855,31 @@ var RESUME = { filename: 'Kisha-Dua-Resume.pdf', data: 'data:application/pdf;bas
   function stop(e) { if (e.target.closest && e.target.closest('.ov-item .pg-in')) { e.preventDefault(); e.stopImmediatePropagation(); } }
   world.addEventListener('click', stop, true);
   world.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') stop(e); }, true);
+})();
+</script>
+<script>
+/* phones: wrap arrow characters so they can be hidden (pages, templates and case studies) */
+(function () {
+  var RX = /[\u2190-\u2199\u21A9-\u21BB\u2934-\u2937\u27F5-\u27F8]/;
+  function wrap(root) {
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+      var p = n.parentNode; if (!p || /^(SCRIPT|STYLE|TEXTAREA|TITLE)$/.test(p.nodeName) || (p.classList && p.classList.contains('arr'))) return NodeFilter.FILTER_REJECT;
+      return RX.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP; } });
+    var list = []; while (w.nextNode()) list.push(w.currentNode);
+    list.forEach(function (n) {
+      var f = document.createDocumentFragment();
+      n.nodeValue.split(new RegExp('(' + RX.source + '\\s?)')).forEach(function (part) {
+        if (!part) return;
+        if (RX.test(part)) { var s = document.createElement('span'); s.className = 'arr'; s.setAttribute('aria-hidden', 'true'); s.textContent = part; f.appendChild(s); }
+        else f.appendChild(document.createTextNode(part));
+      });
+      n.parentNode.replaceChild(f, n);
+    });
+  }
+  wrap(document.body);
+  [].forEach.call(document.querySelectorAll('template'), function (tp) { wrap(tp.content); });
+  var dyn = document.getElementById('cs-dyn'), cs = document.getElementById('case');
+  if (cs) new MutationObserver(function () { wrap(cs); }).observe(cs, { childList: true, subtree: true });
 })();
 </script>
 </body>
