@@ -2328,7 +2328,7 @@ html, body { overflow-x: clip; max-width: 100%; }
    TO ADD THE REAL PDF: set RESUME.data to the PDF as a base64 data URI ("data:application/pdf;base64,...")
    and declare the "downloads" capability when publishing. Until then every résumé control is clearly
    marked "PDF coming soon" and never pretends to download. */
-var RESUME = { filename: 'Kisha-Dua-Resume.pdf', data: 'assets/Kisha-Dua-Resume.pdf' }; /* to update your résumé, replace this file on GitHub */
+var RESUME = { filename: 'Kisha-Dua-Resume.pdf', data: 'assets/Kisha-Dua-Resume.pdf' }; /* to update the résumé, replace assets/Kisha-Dua-Resume.pdf */
 (function () {
   var ready = !!RESUME.data, status = document.getElementById('rs-status');
   var ctrls = [].slice.call(document.querySelectorAll('.js-resume'));
@@ -2344,8 +2344,8 @@ var RESUME = { filename: 'Kisha-Dua-Resume.pdf', data: 'assets/Kisha-Dua-Resume.
     e.preventDefault(); e.stopPropagation();
     if (!ready) { say('The r\u00e9sum\u00e9 PDF hasn\u2019t been added yet. It\u2019ll be downloadable here soon.'); return; }
     if (dl) {
-      Promise.resolve().then(function () { var b = atob(RESUME.data.split(',')[1]), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return new Blob([u], { type: 'application/pdf' }); })
-        .then(function (blob) { return dl.save({ filename: RESUME.filename, data: blob }); })
+      Promise.resolve().then(function () { var b = atob(RESUME.data.split(',')[1]), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; })
+        .then(function (bytes) { return dl.save({ filename: RESUME.filename, data: bytes }); })
         .then(function () { say('R\u00e9sum\u00e9 downloaded.'); })
         .catch(function (err) { say(err && err.code === 'declined' ? 'Download cancelled.' : 'The download didn\u2019t work here. Try opening the page in a new tab.'); });
     } else {
